@@ -1,0 +1,77 @@
+/*
+  Rui Santos
+  Complete project details at https://RandomNerdTutorials.com/esp32-mpu-6050-web-server/
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files.
+  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+*/
+html {
+  background-color: #a2adc2;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  display: inline-block;
+}
+.conteudo{
+  text-align: center;
+}
+p {
+  font-size: 1.2rem;
+}
+.content{
+
+  padding: 50px;
+
+}
+body {
+  margin: 0px;
+}
+.topnav {
+  overflow: hidden;
+  background-color: #0b1935;
+  color: #e6e6e6;
+  font-size: 1rem;
+}
+.content {
+  padding: 20px;
+}
+.card {
+  background-color: #eeeded;
+  box-shadow: 4px 4px 24px 2px rgba(140,140,140,.5);
+  padding-bottom: 2rem;
+}
+.card-title {
+  font-size: 1.8em;
+  color:#122A59;
+  font-weight: bold;
+}
+.cards {
+  color: #122A59  ;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid; grid-gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  padding-bottom: 2rem;
+}
+.reading {
+  font-size: 1.5em;
+}
+.button:hover{background-color: #0a1529;}
+
+.button{
+  border: none;
+  color: #E9EBEA;
+  background-color: #324873;
+  padding: 15px;
+  text-align: center;
+  display: inline-block;
+  font-size: 16px; width: 200px;
+  font-weight: bold;
+  border-radius: 8px;
+}
+
+.reset:hover {
+  background-color: #a7a7a7;
+}
+
+#botão{
+  padding-left: 62.5rem;
+}
