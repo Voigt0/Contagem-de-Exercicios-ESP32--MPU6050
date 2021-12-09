@@ -1,11 +1,3 @@
-/*
-  Rui Santos
-  Complete project details at https://RandomNerdTutorials.com/esp32-mpu-6050-web-server/
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files.
-  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 // Create events for the sensor readings
 if (!!window.EventSource) {
   var source = new EventSource('/events');
@@ -27,11 +19,6 @@ if (!!window.EventSource) {
     document.getElementById("gyroY").innerHTML = obj.gyroY;
     document.getElementById("gyroZ").innerHTML = obj.gyroZ;
 
-    // Change cube rotation after receiving the readinds
-    cube.rotation.x = obj.gyroY;
-    cube.rotation.z = obj.gyroX;
-    cube.rotation.y = obj.gyroZ;
-    renderer.render(scene, camera);
   }, false);
 
   source.addEventListener('temperature_reading', function(e) {
@@ -42,11 +29,15 @@ if (!!window.EventSource) {
   source.addEventListener('accelerometer_readings', function(e) {
     console.log("accelerometer_readings", e.data);
     var obj = JSON.parse(e.data);
+    document.getElementById("totalaccA").innerHTML = obj.totalaccA;
+    document.getElementById("numEx").innerHTML = obj.numEx;
+    document.getElementById("numExT").innerHTML = obj.numExT;
+    document.getElementById("numExVa").innerHTML = obj.numExVa;
+    document.getElementById("numExVo").innerHTML = obj.numExVo;
     document.getElementById("accX").innerHTML = obj.accX;
     document.getElementById("accY").innerHTML = obj.accY;
     document.getElementById("accZ").innerHTML = obj.accZ;
     document.getElementById("accA").innerHTML = obj.accA;
-    document.getElementById("numEx").innerHTML = obj.numEx;
   }, false);
 }
 
