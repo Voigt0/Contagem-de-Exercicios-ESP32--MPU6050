@@ -1,14 +1,7 @@
-/*********
-  Rui Santos
-  Complete project details at https://RandomNerdTutorials.com/esp32-mpu-6050-web-server/
-  
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files.
-  
-  The above copyright notice and this permission notice shall be included in all
-  copies or substantial portions of the Software.
-*********/
+//Rodrigo Voigt Filho 2 Ano
+//
 
+//Incluindo as bibliotecas
 #include <DNSServer.h>
 #include <Arduino.h>
 #include <WiFi.h>
@@ -19,54 +12,123 @@
 #include <Arduino_JSON.h>
 #include "SPIFFS.h"
 
-// Replace with your network credentials
-const char ssid[] = "Unifique_WIFI_382609";
-const char* password = "17598023";
 
-// Create AsyncWebServer object on port 80
+
+
+
+
+
+
+//Informações da internet pra depois fazer conexão STA obs: inútil por enquanto
+char* ssid = "";
+char* password = "";
+
+
+
+
+
+
+
+
+
+//Config dos Servidores
 DNSServer dnsServer;
+const byte DNS_PORT = 53;
+//Endereço IP http://192.168.1.1
+IPAddress apIP(192, 168, 1, 1);
 AsyncWebServer server(80);
-
-
-// Create an Event Source on /events
 AsyncEventSource events("/events");
 
-// Json Variable to Hold Sensor Readings
 JSONVar readings;
 
-// Timer variables
-unsigned long lastTime = 0;  
-unsigned long lastTimeTemperature = 0;
-unsigned long lastTimeAcc = 0;
-unsigned long gyroDelay = 10;
-unsigned long temperatureDelay = 1000;
-unsigned long accelerometerDelay = 100;
-unsigned long lastTimeTimer = 0;
-unsigned long timerDelay = 100;
 
-// Create a sensor object
+
+
+
+
+
+//Variáveis de tempo e delay
+//Zeros
+unsigned long zeroGyro = 0;
+unsigned long zeroTemp = 0;
+unsigned long zeroAcc = 0;
+unsigned long zeroTimer = 0;
+
+//Delay em milissegundos
+unsigned long delayGyro = 10;
+unsigned long delayTemp = 1000;
+unsigned long delayAcc = 250;
+unsigned long delayTimer = 100;
+
+
+
+
+
+//Config do sensor
 Adafruit_MPU6050 mpu;
 
 sensors_event_t a, g, temp;
 
+
+
+
+
+
+
+
+
+//Varíaveis usadas
+//Dados do Gyro
 float gyroX, gyroY, gyroZ;
-float accX, accY, accZ, accA;
+
+//Dados do Acc
+float accX, accY, accZ, accA, totalaccA, accAA;
+
+//Pelo amor né
 int numEx = 0;
+int numExVa = 0;
+int numExVo = 0;
+int numExT = 0;
 int acumul = 0;
+int acumulV = 0;
+
+//Dados Timer
 int timerMili = 0;
 int timerSeg = 0;
 int timerMin = 0;
 int timerHora = 0;
-float temperature;
-int estTempo = 0;
 
-//Gyroscope sensor deviation
+//10% de ctz que é dos botões
+int estTempo = 0;
+int estEx = 0;
+int salvTempo = 0;
+int salvEx = 0;
+
+
+//Dados Temp
+float temperature;
+
+
+
+
+
+
+
+
+//Calibrar o Gyro mas nem uso mais por motivos de gambiarra
 float gyroXerror = 0.03;
 float gyroYerror = 0.03;
 float gyroZerror = 0.03;
 
-// Init MPU6050
-void initMPU(){
+
+
+
+
+
+
+
+//Startar o MPU6050
+void initMPU() {
   if (!mpu.begin()) {
     Serial.println("Failed to find MPU6050 chip");
     while (1) {
@@ -76,6 +138,7 @@ void initMPU(){
   Serial.println("MPU6050 Found!");
 }
 
+//Startar o SPIFFS
 void initSPIFFS() {
   if (!SPIFFS.begin()) {
     Serial.println("An error has occurred while mounting SPIFFS");
@@ -83,95 +146,162 @@ void initSPIFFS() {
   Serial.println("SPIFFS mounted successfully");
 }
 
-const byte DNS_PORT = 53;
-IPAddress apIP(192, 168, 1, 1);
 
-// Initialize WiFi
-void initWiFi() {
+
+
+
+
+
+//Startar o WiFi
+void initConexao() {
+  //Criar Acess Point
   WiFi.mode(WIFI_AP);
+  //Config
   WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
-  WiFi.softAP("voigtTCCKKK", "12345678");
-  dnsServer.start(DNS_PORT, "acelerxise1560", apIP);
+  //Nome e Senha do Acess Point
+  WiFi.softAP("Contabilizador de Exercícios", "87654321");
+
+//WiFi.mode(WIFI_STA);
+//  WiFi.begin(ssid, password);
+//  Serial.println("");
+//  Serial.print("Connecting to WiFi...");
+//  while (WiFi.status() != WL_CONNECTED) {
+//    Serial.print(".");
+//    delay(1000);
+//  }
+//  Serial.println("");
+//  Serial.println(WiFi.localIP());
 }
 
-String getGyroReadings(){
+
+
+
+
+
+
+
+
+String getGyroReadings() {
+  //Pegando info do sensor
   mpu.getEvent(&a, &g, &temp);
 
-  float gyroX_temp = (g.gyro.x-0.26);
-  if(abs(gyroX_temp) > gyroXerror)  {
-    gyroX += gyroX_temp/50.00;
-  }
-  
-  float gyroY_temp = (g.gyro.y-0.063);
-  if(abs(gyroY_temp) > gyroYerror) {
-    gyroY += gyroY_temp/70.00;
+  //Contas e talz
+  float gyroX_temp = (g.gyro.x - 0.26);
+  if (abs(gyroX_temp) > gyroXerror)  {
+    gyroX += gyroX_temp / 50.00;
   }
 
-  float gyroZ_temp = (g.gyro.z+0.007);
-  if(abs(gyroZ_temp) > gyroZerror) {
-    gyroZ += gyroZ_temp/90.00;
+  float gyroY_temp = (g.gyro.y - 0.063);
+  if (abs(gyroY_temp) > gyroYerror) {
+    gyroY += gyroY_temp / 70.00;
   }
 
+  float gyroZ_temp = (g.gyro.z + 0.007);
+  if (abs(gyroZ_temp) > gyroZerror) {
+    gyroZ += gyroZ_temp / 90.00;
+  }
+
+  //Salvando e enviando por JSON os valores do Gyro
   readings["gyroX"] = String(gyroX);
   readings["gyroY"] = String(gyroY);
   readings["gyroZ"] = String(gyroZ);
-
   String jsonString = JSON.stringify(readings);
   return jsonString;
 }
 
+
+
+
 String getAccReadings() {
+  //Pegando info do sensor
   mpu.getEvent(&a, &g, &temp);
-  // Get current acceleration values
-  accX = a.acceleration.x+0.49;
-  accY = a.acceleration.y+0.15;
-  accZ = a.acceleration.z-0.40;
-  accA = (accX)+(accY)+(accZ);
-  if(accA < 0){
-    accA = accA*-1;
-  }
-  if(accA > 14){
-    acumul = 1;
-  }
-  if(accA < 11){
-    if(acumul > 0){
-      numEx = numEx + 1;
+
+  //Pegando a velocidade e aplicando uma correção
+  accX = a.acceleration.x-0.2;
+  accY = a.acceleration.y+0.7;
+  accZ = a.acceleration.z-1;
+  accA = sqrt( (accX * accX) + (accY * accY) + (accZ * accZ) );
+
+  if(estEx == 1){
+    if(salvEx == 1){
+      numEx = 0;
+      numExT = 0;
+      numExVa = 0;
+      numExVo = 0;
       acumul = 0;
+      acumulV = 0;
+      salvEx = 0;
     }
+  totalaccA = accA - accAA;
+  if (totalaccA>4 or totalaccA<-4){
+      acumul = 1;
+  }else if(totalaccA<4 and totalaccA>-4 and acumul == 1){
+      acumulV++;
+      if(acumulV % 2 == 0){
+        numExVa++;
+      }else{
+        numExVo++;
+        numExT++;
+      }
+      numEx++;
+      acumul = 0;
   }
+  accAA = accA;
+  }else{
+    salvEx = 1;
+  }
+
+  //Salvando e enviando por JSON os valores do Acc
   readings["accX"] = String(accX);
   readings["accY"] = String(accY);
   readings["accZ"] = String(accZ);
   readings["accA"] = String(accA);
+  readings["totalaccA"] = String(totalaccA);
   readings["numEx"] = String(numEx);
+  readings["numExVa"] = String(numExVa);
+  readings["numExVo"] = String(numExVo);
+  readings["numExT"] = String(numExT);
   String accString = JSON.stringify (readings);
   return accString;
 }
 
-String getTemperature(){
+String getTemperature() {
+  //Pegando info do sensor
   mpu.getEvent(&a, &g, &temp);
+
+  //enviando por JSON o valor da temp obs: nn precisa de reading pq é só um
   temperature = temp.temperature;
   return String(temperature);
 }
 
 String getTime() {
+  //Pegando info do sensor mas nem to usando ele WTFKKK
   mpu.getEvent(&a, &g, &temp);
 
-  if(estTempo == 1){
-  timerMili = timerMili + 10;
-  if(timerMili >= 100){
-    timerSeg = timerSeg + 1;
-    timerMili = 0;
+  //Contagem do tempo
+  if (estTempo == 1) {
+    if(salvTempo == 1){
+      timerMili = 0;
+      timerSeg = 0;
+      timerMin = 0;
+      salvTempo = 0;
+    }
+    timerMili = timerMili + 10;
+    if (timerMili >= 100) {
+      timerSeg = timerSeg + 1;
+      timerMili = 0;
+    }
+    if (timerSeg >= 60) {
+      timerMin = timerMin + 1;
+      timerSeg = 0;
+    }
   }
-  if(timerSeg >= 60){
-    timerMin = timerMin + 1;
-    timerSeg = 0;
+  //Resetando
+  else {
+    salvTempo = 1;
   }
-  }else{
-  timerMili = 0;
-  timerSeg = 0;
-  timerMin = 0;
-  }
+
+  //Salvando e enviando por JSON os valores do Timer
   readings["timerMili"] = String(timerMili);
   readings["timerSeg"] = String(timerSeg);
   readings["timerMin"] = String(timerMin);
@@ -180,56 +310,69 @@ String getTime() {
 }
 
 
+
+
+
+
 void setup() {
+  //Serialzada neles
   Serial.begin(115200);
-  initWiFi();
+
+  //Chamando os outros setup
+  initConexao();
   initSPIFFS();
   initMPU();
 
-  // Handle Web Server
-  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+  //Handle Web Server
+  //Basicamente pega os valor que a página envia
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest * request) {
     request->send(SPIFFS, "/index.html", "text/html");
   });
 
-  server.on("/reset", HTTP_GET, [](AsyncWebServerRequest *request){
-    gyroX=0;
-    gyroY=0;
-    gyroZ=0;
-    accX = 0;
-    accY = 0;
-    accZ = 0;
-    accA = 0;
+  //Botão Reset Num
+  server.on("/resetNum", HTTP_GET, [](AsyncWebServerRequest * request) {
     numEx = 0;
     acumul = 0;
-    temperature = 0;
+    numExVa = 0;
+    numExVo = 0;
+    acumulV = 0;
+    numExT = 0;
     request->send(200, "text/plain", "OK");
   });
 
-  server.on("/resetNum", HTTP_GET, [](AsyncWebServerRequest *request){
-    numEx = 0;
-    acumul = 0;
-    request->send(200, "text/plain", "OK");
-  });
 
-  server.on("/reset", HTTP_GET, [](AsyncWebServerRequest *request){
-    gyroY=0;
-    request->send(200, "text/plain", "OK");
-  });
-
-  server.on("/initTempor", HTTP_GET, [](AsyncWebServerRequest *request){
-    if(estTempo == 0){
+  //Iniciar Timer
+  server.on("/initTempor", HTTP_GET, [](AsyncWebServerRequest * request) {
+    if (estTempo == 0) {
       estTempo = 1;
-      } else {
-        estTempo = 0;
-        }
+    } else {
+      estTempo = 0;
+    }
     request->send(200, "text/plain", "OK");
   });
-  
+
+    //Iniciar Tudo
+  server.on("/initAll", HTTP_GET, [](AsyncWebServerRequest * request) {
+    if (estTempo == 0) {
+      estTempo = 1;
+    } else {
+      estTempo = 0;
+    }
+    if (estEx == 0) {
+      estEx = 1;
+    } else {
+      estEx = 0;
+    }
+    request->send(200, "text/plain", "OK");
+  });
+
   server.serveStatic("/", SPIFFS, "/");
-  
+
+
+
   // Handle Web Server Events
-  events.onConnect([](AsyncEventSourceClient *client){
-    if(client->lastId()){
+  events.onConnect([](AsyncEventSourceClient * client) {
+    if (client->lastId()) {
       Serial.printf("Client reconnected! Last message ID that it got is: %u\n", client->lastId());
     }
     // send event with message "hello!", id current millis
@@ -241,26 +384,42 @@ void setup() {
   server.begin();
 }
 
+
+
+
+
+
 void loop() {
-    dnsServer.processNextRequest();
-  if ((millis() - lastTime) > gyroDelay) {
+  //Confi do servidor DNS
+  dnsServer.processNextRequest();
+
+  //Código dos delays
+
+  //Delay Gyro
+  if ((millis() - zeroGyro) > delayGyro) {
     // Send Events to the Web Server with the Sensor Readings
-    events.send(getGyroReadings().c_str(),"gyro_readings",millis());
-    lastTime = millis();
+    events.send(getGyroReadings().c_str(), "gyro_readings", millis());
+    zeroGyro = millis();
   }
-  if ((millis() - lastTimeAcc) > accelerometerDelay) {
+
+  //Delay Temp
+  if ((millis() - zeroTemp) > delayTemp) {
     // Send Events to the Web Server with the Sensor Readings
-    events.send(getAccReadings().c_str(),"accelerometer_readings",millis());
-    lastTimeAcc = millis();
+    events.send(getTemperature().c_str(), "temperature_reading", millis());
+    zeroTemp = millis();
   }
-  if ((millis() - lastTimeTemperature) > temperatureDelay) {
+
+  //Delay Acc
+  if ((millis() - zeroAcc) > delayAcc) {
     // Send Events to the Web Server with the Sensor Readings
-    events.send(getTemperature().c_str(),"temperature_reading",millis());
-    lastTimeTemperature = millis();
+    events.send(getAccReadings().c_str(), "accelerometer_readings", millis());
+    zeroAcc = millis();
   }
-  if ((millis() - lastTimeTimer) > timerDelay) {
+
+  //Delay Timer
+  if ((millis() - zeroTimer) > delayTimer) {
     // Send Events to the Web Server with the Sensor Readings
-    events.send(getTime().c_str(),"timer_readings",millis());
-    lastTimeTimer = millis();
+    events.send(getTime().c_str(), "timer_readings", millis());
+    zeroTimer = millis();
   }
 }
