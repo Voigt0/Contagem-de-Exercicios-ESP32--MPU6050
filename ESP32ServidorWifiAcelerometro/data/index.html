@@ -1,72 +1,66 @@
-<!--
-  Rui Santos
-  Complete project details at https://RandomNerdTutorials.com/esp32-mpu-6050-web-server/
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files.
-  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
--->
-
 <!DOCTYPE HTML><html>
 <head>
-  <title>ESP Web Server</title>
+  <title>Contagem de Exercícios</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="stylesheet" type="text/css" href="style2.css">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/107/three.min.js"></script>
 </head>
 <body>
 <div class="conteudo">
   <div class="topnav">
-    <h1>ADMINISTRADOR</h1>
+    <h1>USUÁRIO</h1>
     <h1><i class="fas fa-dumbbell"></i> Projeto Contagem de exercícios <i class="fas fa-dumbbell"></i></h1>
   </div>
-  <div class="content">
-    <div class="cards">
-      <div class="card">
-        <p class="card-title">DADOS GIROSCÓPIO</p>
-        <p><span class="reading">X: <span id="gyroX"></span> rad</span></p>
-        <p><span class="reading">Y: <span id="gyroY"></span> rad</span></p>
-        <p><span class="reading">Z: <span id="gyroZ"></span> rad</span></p>
-      </div>
-      <div class="card">
-        <p class="card-title">DADOS ACELERÔMETRO</p>
-        <p><span class="reading">X: <span id="accX"></span> ms<sup>2</sup></span></p>
-        <p><span class="reading">Y: <span id="accY"></span> ms<sup>2</sup></span></p>
-        <p><span class="reading">Z: <span id="accZ"></span> ms<sup>2</sup></span></p>
- 	      <p><span class="reading">Aceleração Tridimensional (XYZ): <span id="accA"></span> ms<sup>2</sup></span></p>
-	      <p><span class="reading">Número Exercícios: <span id="numEx"></span><sup></sup></span></p>
-      </div>
+<div class="content">
+  <div class="cards">
+    <div class="card">
+      <p class="card-title">DADOS ACELERÔMETRO</p>
+      <p><span class="reading">X: <span id="accX"></span> ms<sup>2</sup></span></p>
+      <p><span class="reading">Y: <span id="accY"></span> ms<sup>2</sup></span></p>
+      <p><span class="reading">Z: <span id="accZ"></span> ms<sup>2</sup></span></p>
+      <p><span class="reading">Aceleração Tridimensional (XYZ): <span id="totalaccA"></span> ms<sup>2</sup></span></p>
     </div>
-    <div class="cards">
-      <div class="card">
-        <p class="card-title">DADOS TEMPERATURA</p>
-        <p><span class="reading"><span id="temp"></span> &deg;C</span></p>
-      </div>
-        
-      <div class="card">
-        <p class="card-title">BOTÕES</p>
-        <button class="button" id="reset" onclick="reset(this)">RESETAR TUDO</button><br><br>
-        <button class="button" id="resetNum" onclick="reset(this)">RESETAR NÚMERO DE EXERCÍCIOS</button>
-        <br><br>
-        <button class="button" id="resetExample" onclick="reset(this)">Example</button>
-      </div>
+    <div class="card">
+      <p class="card-title">DADOS TEMPERATURA</p>
+      <p><span class="reading"><span id="temp"></span> &deg;C</span></p>
+      <br><br>
+      <p class="card-title">BOTÕES</p>
+      <button class="button" id="initAll" onclick="init(this)">INICIAR</button>
+      <br><br>
+      <button class="button" id="initTempor" onclick="init(this)">INICIAR TEMPORIZADOR</button>
+      <br><br>
+      <button class="button" id="resetNum" onclick="reset(this)">RESETAR NÚMERO DE EXERCÍCIOS</button>
     </div>
   </div>
   <div class="cards">
     <div class="card">
+      <p class="card-title">DADOS EXERCÍCIOS</p>
+      <p><span class="reading">Total: <span id="numExT"></span><sup></sup></span></p>
+      <p><span class="reading">Total de partes: <span id="numEx"></span><sup></sup></span></p>
+      <p><span class="reading">Exercício 1/2: <span id="numExVa"></span><sup></sup></span></p>
+      <p><span class="reading">Exercício 2/2: <span id="numExVo"></span><sup></sup></span></p>
+    </div>
+  </div>
+  <div class="cards">
+      <div class="card">
+      <p class="card-title">DADOS GIROSCÓPIO</p>
+      <p><span class="reading">X: <span id="gyroX"></span> rad</span></p>
+      <p><span class="reading">Y: <span id="gyroY"></span> rad</span></p>
+      <p><span class="reading">Z: <span id="gyroZ"></span> rad</span></p>
+    </div>
+    <div class="card">
       <p class="card-title">TEMPO</p><br>
-      <button class="button" id="initTempor" onclick="init(this)">INICIAR TEMPORIZADOR</button>
       <p><span class="reading"><span id="timerMin"></span> : </span></p>
       <p><span class="reading"><span id="timerSeg"></span> : </span></p>
       <p><span class="reading"><span id="timerMili"></span> : </span></p>
       <br>
     </div>
+  </div>
 </div>
-
-
-
-  <a id="botão" href="usuario.html"><button class="button" id="change" onclick="">Usuário</button></a>
+</div>
+<a id="botão" href="index.html"><button class="button" id="change" onclick="">Administrador</button></a>
 <script src="script.js"></script>
 <br><br><br><br>
 </body>
