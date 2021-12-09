@@ -6,7 +6,7 @@
   The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 html {
-  background-color: #a2adc2;
+  background-color: #bbe4b4;
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   display: inline-block;
 }
@@ -26,7 +26,7 @@ body {
 }
 .topnav {
   overflow: hidden;
-  background-color: #0b1935;
+  background-color: #12350b;
   color: #e6e6e6;
   font-size: 1rem;
 }
@@ -40,11 +40,11 @@ body {
 }
 .card-title {
   font-size: 1.8em;
-  color:#122A59;
+  color:#145912;
   font-weight: bold;
 }
 .cards {
-  color: #122A59  ;
+  color: #145912  ;
   max-width: 1200px;
   margin: 0 auto;
   display: grid; grid-gap: 2rem;
@@ -54,12 +54,12 @@ body {
 .reading {
   font-size: 1.5em;
 }
-.button:hover{background-color: #0a1529;}
+.button:hover{background-color: #0a290a;}
 
 .button{
   border: none;
   color: #E9EBEA;
-  background-color: #324873;
+  background-color: #377332;
   padding: 15px;
   text-align: center;
   display: inline-block;
@@ -73,5 +73,5 @@ body {
 }
 
 #botão{
-  padding-left: 62.5rem;
+  padding-left: 5.6%;
 }
