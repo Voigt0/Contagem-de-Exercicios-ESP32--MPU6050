@@ -232,10 +232,10 @@ String getAccReadings() {
       acumulV = 0;
       salvEx = 0;
     }
-  totalaccA = accA - accAA;
-  if (totalaccA>4 or totalaccA<-4){
+  float totalaccA = accA - accAA;
+  if (totalaccA>3.5 or totalaccA<-3.5){
       acumul = 1;
-  }else if(totalaccA<4 and totalaccA>-4 and acumul == 1){
+  }else if(totalaccA<3.5 and totalaccA>-3.5 and acumul == 1){
       acumulV++;
       if(acumulV % 2 == 0){
         numExVa++;
@@ -252,11 +252,11 @@ String getAccReadings() {
   }
 
   //Salvando e enviando por JSON os valores do Acc
+  readings["totalaccA"] = String(totalaccA);
   readings["accX"] = String(accX);
   readings["accY"] = String(accY);
   readings["accZ"] = String(accZ);
   readings["accA"] = String(accA);
-  readings["totalaccA"] = String(totalaccA);
   readings["numEx"] = String(numEx);
   readings["numExVa"] = String(numExVa);
   readings["numExVo"] = String(numExVo);
